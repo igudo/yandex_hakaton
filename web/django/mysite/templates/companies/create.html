@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head-down %}
+    <style>
+        body {
+            background: #F4F4F4;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container mb-5">
+        <h2 class="mt-5 text-center mb-3">Создание компании</h2>
+        <div class="card-d">
+            <form action="" class="mt-4 form-input-effect" id="form-input-effect" method="post">
+                {% if gs_auth_error %}
+                    <div class="error-hide mb-5">{{ gs_auth_error }}</div>
+                {% endif %}
+                <div class="container mb-3">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        {% for field in form %}
+                            <div class="form-group col-md-6">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                {{ field.label_tag }}
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="w-100 mt-4 text-center">
+                        <input type="submit" class="btn btn-big btn-blue" value="Отправить на проверку">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container mb-5">
+        <div class="card-d">
+            <div class="container">
+                <h2 class="text-center mt-3">Информация</h2>
+                <p>Максимальное количество компаний на проверке: {{ max_companies }}. После отправки компании она попадает на ручную проверку нашими администраторами. Мы стараемся максимально сократить время проверки компаний, среднее время проверки: 1 сутки.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

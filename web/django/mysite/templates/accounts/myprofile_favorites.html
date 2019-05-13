@@ -1,0 +1,56 @@
+{% extends 'accounts/myprofile_base.html' %}
+{% load users_extras %}
+{% load static %}
+
+{% block head-up %}
+    <script>
+        var isAjaxNow = false;
+        var isBookmarkNow = false;
+    </script>
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/articles/main.css" %}">
+
+    <style>
+        body {
+            background: white;
+        }
+    </style>
+{% endblock %}
+
+{% block profile_data %}
+    <div class="row oneheight" data-last-id="{{ last_id }}" id="article_wrap">
+        {% if my_favorites|length > 0 %}
+            {% for bookmark in my_favorites %}
+                {% with article=bookmark.obj %}
+                    {% include 'articles/one_article.html' %}
+                {% endwith %}
+            {% endfor %}
+        <div class="text-center">
+            <a class="btn btn-blue mt-5" id="load-btn" onclick="load_more($('#article_wrap').attr('data-last-id'));return false;" href="/">Загрузить еще</a>
+        </div>
+    </div>
+        {% else %}
+            </div>
+            <p class="text-center">Данных не найдено!</p>
+        {% endif %}
+{% endblock %}
+
+
+
+{% block js %}
+
+<script>
+    function get_url(last_id) {
+        var tab = "{{ request.GET.tab }}";
+        var url = "{% url 'my_profile' %}" + "?last_id=" + last_id.toString() + '&tab=' + tab + '&query=' + '{{ request.GET.query }}';
+        return url;
+    }
+</script>
+
+<script src="{% static 'js/post_ajax.js' %}"></script>
+<script src="{% static 'js/bookmarks.js' %}"></script>
+<script src="{% static 'js/articles.js' %}"></script>
+
+{% endblock %}

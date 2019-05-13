@@ -1,0 +1,11 @@
+.idea
+*.log
+__pycache__
+*.pyc
+media/*
+!media/default
+!media/default/*
+!media
+dev.db
+*/migrations/*
+!*/migrations/__init__.py

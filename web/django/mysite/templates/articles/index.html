@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load users_extras %}
+
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/articles/main.css" %}">
+
+    <style>
+
+        .nav-tab-modestin li {
+            width: auto;
+            text-align: center;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container mb-5 mt-3">
+        <div class="row">
+            <div class="col">
+                <div class="nav-tab-modestin-wrap mt-3">
+                    <ul class="nav nav-tab-modestin">
+                        <li class="nav-item {% if request.GET.tab == "0" or not request.GET.tab %}active{% endif %}">
+                            <a class="nav-link  second_line_title" href="?tab=0">Все подряд</a>
+                        </li>
+                        <li class="nav-item {% if request.GET.tab == "1" %}active{% endif %}">
+                            <a class="nav-link second_line_title " href="?tab=1">Популярные</a>
+                        </li>
+                        {% for category in categories %}
+                            <li class="nav-item {% if request.GET.tab == category.char_id %}active{% endif %}">
+                                <a class="nav-link second_line_title "
+                                   href="?tab={{ category.char_id }}">{{ category.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row oneheight" data-last-id="{{ last_id }}" id="article_wrap">
+
+            {% for article in articles %}
+
+            
+                {% include 'articles/one_article.html' %}
+
+
+            {% endfor %}
+
+        </div>
+
+        <div class="text-center">
+            <a class="btn btn-blue mt-5" id="load-btn" onclick="load_more($('#article_wrap').attr('data-last-id'));return false;" href="/">Загрузить еще</a>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+    function get_url(last_id) {
+        var tab = "{{ request.GET.tab }}";
+        {% if alerts %}
+            var url = "{% url 'alerts_index' %}" + "?last_id=" + last_id.toString() + '&tab=' + tab;
+        {% elif digests %}
+            var url = "{% url 'digests_index' %}" + "?last_id=" + last_id.toString() + '&tab=' + tab;
+        {% else %}
+            var url = "{% url 'analitics_index' %}" + "?last_id=" + last_id.toString() + '&tab=' + tab;
+        {% endif %}
+        return url;
+    }
+</script>
+
+<script src="{% static 'js/post_ajax.js' %}"></script>
+<script src="{% static 'js/bookmarks.js' %}"></script>
+<script src="{% static 'js/articles.js' %}"></script>
+
+
+{% endblock %}

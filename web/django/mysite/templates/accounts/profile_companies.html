@@ -1,0 +1,153 @@
+{% extends 'accounts/profile_base.html' %}
+
+
+{% block profile_data %}
+    {% if my_companies|length > 0 %}
+        {% for company in my_companies %}
+            {% if company.is_accepted %}
+                <div class="company-myprofile-one-accepted block-bg">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-10 col-md-2 company-myprofile-accepted-id">
+                                <img src="{{ company.image.url }}" alt="{{ company.id }}" width="100%">
+                            </div>
+                            <div class="col-2 col-md-2">
+<!--                                <div class="dropdown">-->
+<!--                                    <a class="btn btn-grey dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                                        <i class="mdi mdi-settings"></i>-->
+<!--                                    </a>-->
+
+<!--                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">-->
+<!--                                        <a class="dropdown-item" href="{% url 'edit_company' login=company.id %}">Редактировать</a>-->
+<!--                                        <a class="dropdown-item" style="cursor: pointer" data-link="{% url 'delete_company' login=company.id %}" onclick="delete_company($(this).attr('data-link'))">Удалить</a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <p>{{ company.name }}</p>
+
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <p>ИНН: {{ company.inn }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="company-myprofile-one-unaccepted block-bg">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-2 company-myprofile-unaccepted-id">
+                                <p>ID{{ company.id }}</p>
+                                <div class="dropdown">
+                                    <a class="btn btn-grey dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-settings"></i>
+                                    </a>
+
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item" onclick="get_company_info({{ company.id }});return false;" href="">Информация</a>
+                                        <a class="dropdown-item" href="{% url 'edit_company' login=company.id %}">Редактировать</a>
+                                        <a class="dropdown-item" style="cursor: pointer" data-link="{% url 'delete_company' login=company.id %}" onclick="delete_company($(this).attr('data-link'))">Удалить</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-5">
+                                <p>{{ company.name }}</p>
+                                <p>ИНН: {{ company.inn }}</p>
+                            </div>
+                            <div class="col-6 col-md-5">
+                                <p>Статус: {% if company.on_moder %}<span class="text-info">На модерации</span>{% elif company.is_closed %}<span class="text-danger">Отказано</span>{% else %}Ожидание{% endif %}</p>
+                                <a onclick="show_info({{ company.id }});return false;"
+                                   href=""
+                                   id="show_info_{{ company.id }}"
+                                   data-info="{{ company.moderating_text }}"
+                                   class="btn btn-blue">Информация</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="text-center">Компаний не найдено!</p>
+<!--        <div class="row justify-content-center">-->
+<!--            <a class="btn btn-blue" href="{% url 'create_company' %}">Отправить заявку на создание</a>-->
+<!--        </div>-->
+    {% endif %}
+
+
+
+    <div class="modal fade" tabindex="-1" id="infoModal" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Информация о модерации</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="model_text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script>
+        function delete_company(link) {
+
+            Swal.fire({
+                confirmButtonColor: '#ff2845',
+                confirmButtonText: 'Далее',
+                cancelButtonText: 'Отмена',
+                showConfirmButton: true,
+                showCancelButton: true,
+                text: "Вы уверены, что хотите удалить компанию?",
+            }).then((res) => {
+                if (res.value) {
+                    Swal.fire({
+                        confirmButtonColor: '#ff2845',
+                        confirmButtonText: 'Удалить',
+                        cancelButtonText: 'Отмена',
+                        showConfirmButton: true,
+                        showCancelButton: true,
+                        text: "Все данные потеряются, продолжить?",
+                    }).then((res) => {
+                        if (res.value) {
+                            window.open(link, "_self");
+                        }
+                    })
+                }
+            });
+            return false;
+        }
+
+        function get_company_info(pk) {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "get_company_info" %}',
+                data: {
+                    'login': pk,
+                },
+                success: function (data) {
+                    data = JSON.parse(data);
+                    console.log(data['fields']['inn']);
+                }
+            });
+        }
+
+        function show_info(pk) {
+            var el = $('#show_info_'+pk);
+            $('#model_text').text(el.attr('data-info'));
+            $('#infoModal').modal('show');
+        }
+
+
+
+    </script>
+
+{% endblock %}

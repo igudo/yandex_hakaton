@@ -1,0 +1,54 @@
+{% extends 'crm/base.html' %}
+{% load static %}
+{% load hosts %}
+
+{% block head-up %}
+    <script>
+        var isAjaxNow = false;
+    </script>
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/users.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row mb-3 mt-3">
+            <p>ФИЛЬТР</p>
+            <div class=" w-100">
+                <form action="">
+                    <div class="input-group w-100 mb-3">
+                        <input type="text" class="form-control" required name="query" id="myInput" placeholder="Поиск" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <div class="input-group-append">
+                            <input class="btn btn-blue w-100" type="submit" id="button-addon1" value="Искать">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5 mb-5">
+        <div class="row" id="users" data-last-id="{{ last_id }}">
+            {% for user in users %}
+                {% include 'crm/profiles/one_profile.html' %}
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <a class="btn btn-blue mt-5" id="load-btn" onclick="load_more($('#users').attr('data-last-id'));return false;" href="/">Загрузить еще</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function get_users_url(last_id) {
+        var sort_by = '{{ request.GET.sort_by }}';
+        var query = '{{ request.GET.query }}';
+        var u = "{% url 'profiles' %}" + "?last_id=" + last_id.toString() + '&sort_by=' + sort_by + '&query=' + query;
+        return u;
+    }
+</script>
+    <script src="{% static 'js/post_ajax.js' %}"></script>
+    <script src="{% static 'js/crm_users.js' %}"></script>
+{% endblock %}

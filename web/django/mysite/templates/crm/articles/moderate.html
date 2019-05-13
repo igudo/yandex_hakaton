@@ -1,0 +1,95 @@
+{% extends 'crm/base.html' %}
+
+{% block head %}
+    <style>
+        body {
+            background-color: #f2f4f4;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-5 mb-5">
+        <a href="{% url 'articles' %}" class="btn btn-grey"><i class="mdi mdi-chevron-left"></i> Назад</a>
+        <h2 class="text-center mb-3">Модерирование статьи</h2>
+    </div>
+
+    <div class="container">
+        <div class="card-d">
+            <form action="" class="mt-4 form-input-effect" id="form-input-effect" method="post">
+                {% if gs_auth_error %}
+                    <div class="error-hide mb-5">{{ gs_auth_error }}</div>
+                {% endif %}
+                <div class="container mb-3">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        {% for field in form %}
+                            {% if field.name == 'text' %}
+                                <div class="form-group col-md-12 mt-5">
+                                    {% if field.errors %}
+                                        <div class="error-hide">{{ field.errors }}</div>
+                                    {% endif %}
+                                    {{ field.label_tag }}
+                                    {{ field }}
+
+                                    {% if field.name == 'creator' %}
+                                        <a href="" class="btn btn-blue mt-2">Профиль создателя <i class="mdi mdi-tab-plus"></i></a>
+                                    {% endif %}
+                                </div>
+                            {% elif field.name == 'image' %}
+                                <div class="form-group col-md-12">
+                                    {% if field.errors %}
+                                        <div class="error-hide">{{ field.errors }}</div>
+                                    {% endif %}
+                                    {{ field.label_tag }}
+                                    {{ field }}
+
+                                    {% if field.name == 'creator' %}
+                                        <a href="" class="btn btn-blue mt-2">Профиль создателя <i class="mdi mdi-tab-plus"></i></a>
+                                    {% endif %}
+                                </div>
+                            {% elif field.name == 'allow_comments' %}
+                                <h5 class="mt-4 mb-3 col-md-12 text-center">Настройки коммуникабельности</h5>
+                                <div class="col-md-4">
+                                    <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% elif field.name == 'allow_likes' %}
+                                <div class="col-md-4">
+                                    <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% else %}
+                                <div class="form-group col-md-6">
+                                    {% if field.errors %}
+                                        <div class="error-hide">{{ field.errors }}</div>
+                                    {% endif %}
+                                    {{ field.label_tag }}
+                                    {{ field }}
+
+                                    {% if field.name == 'creator' %}
+                                        <a href="" class="btn btn-blue mt-2">Профиль создателя <i class="mdi mdi-tab-plus"></i></a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="w-100 mt-4 two-buttons">
+                        <div class="btn-1">
+                            <input type="submit" name="deny" class="btn btn-big btn-grey" value="Отвергнуть">
+                        </div>
+
+                        <div class="btn-2">
+                            <input type="submit" name="accept" class="btn btn-big btn-blue text-right" value="Одобрить">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

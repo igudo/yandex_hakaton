@@ -1,0 +1,326 @@
+/* Стили CSS для профиля компании*/
+/****************************************************************/
+
+
+/*********НАВИГАЦИЯ**************/
+
+/* Стиль для первого заголовка */
+
+.first_line_title{
+font-family: 'Fira Sans', sans-serif;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 1.5rem;
+}
+.first_line_title:hover, .first_line_title.active{
+    color: #03A0E4;
+}
+
+/* Стиль для второго заголовка */
+
+.second_line_title{
+font-family: 'Fira Sans', sans-serif;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 15px;
+color: #000000;
+}
+
+/* Стиль для подзаголовочной линии */
+
+.line_under_title{
+width: 739px;
+height: 0px;
+border: 2px solid #CDCDCD;
+margin-top: 0px;
+margin-left: 20px;
+}
+
+
+/*********ДАННЫЕ О ФИРМЕ***********/
+
+/* Стиль для профиля блока о компании */
+
+.company_block{
+border-radius: 5px;
+margin-top: 10px;
+    padding: 10px;
+}
+
+.company_block p {
+    word-break: break-all;
+}
+
+/********Стиль для картинки********/
+.image_comp{
+}
+
+/***** Стиль для наименования компании ****/
+
+.company_name{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 24px;
+color: rgba(0, 0, 0, 0.87);
+margin-top:10px;
+margin-bottom:10px;
+    text-align: center;
+    width: 100%;
+}
+
+
+/********Стиль для линии под кантинкой******/
+
+.line_under_image{
+    width: 100%;
+    height: 0px;
+    border: 1px solid #CFCFCF;
+    margin-top:5px;
+}
+
+/*****Стиль для указания позиции метки "адрес"****/
+.adr_position{
+}
+/********Стиль тексат метки "адресо"******/
+.adress{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 14px;
+color: #747474;
+}
+
+/********Стиль для указания позиции адреса*****/
+.adr_position_text{
+}
+
+/********Стиль для текста адреса********/
+.adress_text{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 15px;
+color: rgba(0, 0, 0, 0.87);
+}
+
+/****Стиль для метки телефона****/
+.number{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 14px;
+color: rgba(0, 0, 0, 0.54)
+}
+
+/****Стиль для номера телефона****/
+
+.number_text{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 15px;
+color: rgba(0, 0, 0, 0.87);
+}
+
+/*********Стиль для метки эл почты******/
+
+.email{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 14px;
+color: rgba(0, 0, 0, 0.54);
+}
+
+/**********Стиль для текста эл почты********/
+
+.email_text{
+font-family: Fira Sans;
+font-style: normal;
+font-weight: normal;
+line-height: normal;
+font-size: 15px;
+color: rgba(0, 0, 0, 0.87);
+}
+
+/*********Стиль кнопки редактирования профиля**********/
+
+.btn_change_prof{
+width: 109.85px;
+height: 35.35px;
+background: #85B7CD;
+border-radius: 5px;
+transform: matrix(1, 0, 0, 1, 0, 0);
+}
+
+.btn_change_prof:active{
+background: #40E0D0
+}
+
+
+
+.nav-profile{
+margin-left: 150px;
+margin-top: 30px;
+}
+
+.nav-profile_2{
+margin: 0 auto;
+}
+
+.nav-profile_2 li{
+    width: 25%;
+    text-align: center;
+}
+.nav-profile_2-companies li{
+    width: 50%;
+    text-align: center;
+}
+.nav-profile_2-publications li{
+    width: 25%;
+    text-align: center;
+}
+.nav-profile_2-publications2 li{
+    width: 33%;
+    text-align: center;
+}
+.nav-profile_2 li.active{
+    border-bottom:2px solid #74BFE9;
+}
+.nav-profile_2 li{
+    border-bottom: 2px solid #CDCDCD;
+}
+.nav-profile_2 li.active a{
+    color: #74BFE9;
+}
+.nav-profile_2 li:hover a{
+    color:  #74BFE9;
+}
+
+
+
+.btn-grey {
+    font-family: Fira Sans, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.5)!important;
+    border: 1px solid rgba(0, 0, 0, 0.5)!important;
+    border-radius: 5px;
+    padding: 0.5rem 0.84rem;
+    background: transparent;
+}
+
+.btn-grey:hover {
+    color: #85B7CD!important;
+    border-color: #85B7CD!important;
+}
+
+
+.nav-profile_3 li{
+    margin: 0 auto;
+}
+
+@media(max-width:10000px){
+
+    .nav-profile{
+    margin-left: 0px;
+    margin-top: 0px;
+}
+}
+@media(max-width:575px){
+    .nav-profile_2 li{
+    width: unset;
+        text-align: center;
+    }
+}
+@media(max-width:767px){
+    .company-myprofile-unaccepted-id {
+        text-align: center;
+        margin: 0 auto;
+        margin-bottom: 10px;
+    }
+}
+
+.line_profile_center{
+    position: absolute;
+    width: 600px;
+    height: 0px;
+    left: 574px;
+    top: 211px;
+
+    border: 2px solid #CDCDCD;
+}
+
+
+.company-myprofile-one-unaccepted * {
+    word-break: break-all;
+}
+
+.company-myprofile-one-unaccepted .dropdown-item {
+    cursor: pointer;
+    color: black!important;
+}
+
+.company-myprofile-one-unaccepted {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.company-myprofile-one-unaccepted:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+
+
+.company-myprofile-one-accepted * {
+    word-break: break-all;
+}
+
+.company-myprofile-one-accepted .dropdown-item {
+    cursor: pointer;
+    color: black!important;
+}
+
+.company-myprofile-one-accepted {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.company-myprofile-one-accepted .container .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.company-myprofile-one-accepted:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 767px) {
+    .company-myprofile-accepted-id {
+        margin-bottom: 20px;
+    }
+    .company-myprofile-accepted-id img {
+        width: 50%;
+        text-align: center;
+        margin: 0 auto;
+    }
+}
+
+.company-myprofile-accepted-id img {
+    border: 1px solid lightgray;
+}
+

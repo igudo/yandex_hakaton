@@ -1,0 +1,24 @@
+{% load static %}
+{% load users_extras %}
+{% load bleach_tags %}
+
+<div class="modestin-comment">
+    <a name="comment-{{ comment.id }}"></a>
+    <div class="row" id="{{ comment.id }}">
+        <div class="col-{{ comment.get_col }} offset-{{ comment.get_offset }}">
+            <div class="card card-default modestin-comment-card">
+                <div class="card-heading">
+                    <a href="{% url 'profile' user_id=comment.author.id %}"><strong style="transition-duration: 0s;">{{ comment.author.get_full_name|default:comment.author.username }}</strong></a>&nbsp;&nbsp;
+                    {{ comment.pub_date }}
+                    <a href="#comment-{{ comment.id }}">#</a>
+                </div>
+                <div class="card-body modestin-comment-body">
+                    <div>{{ comment.content|bleach }}</div>
+                    {% if form %}<a href="" class="btn btn-xs pull-right btn-grey" onclick="show_comments_form({{ comment.id }});return false;">
+                        <i class="mdi mdi-reply"></i>&nbsp;&nbsp;Ответить</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head-down %}
+    <style>
+        body {
+            background: #F4F4F4;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-5 text-center mb-3">Вход в аккаунт</h1>
+        <div class="card-d">
+            <form action="" class="mt-4 form-input-effect" id="form-input-effect" method="post">
+                {% if gs_auth_error %}
+                    <div class="error-hide mb-5">{{ gs_auth_error }}</div>
+                {% endif %}
+                <div class="container mb-3">
+                    {% csrf_token %}
+                    {% for error in form.non_field_errors %}
+                    <div class="error-hide">{{ error }}</div>
+                    {% endfor %}
+                    {% for field in form %}
+                    <div class="form-group mb-4">
+                    {% for error in field.errors %}
+                        <div class="error-hide">{{ error }}</div>
+                    {% endfor %}
+                    {{ field.label_tag }}
+                    {{ field }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3 mb-2">
+                    <input type="submit" value="Войти" class="btn btn-blue btn-big text-white mb-2 mt-3">
+                </div>
+            </form>
+        </div>
+        <div class="card-d mt-3 mb-3">
+            <p class=" text-center mb-0">Ещё не зарегестрированы? <a class="blue-link" href="{% url 'signup' %}">Создать аккаунт</a></p>
+        </div>
+    </div>
+{% endblock %}

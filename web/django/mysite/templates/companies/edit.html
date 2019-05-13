@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head-down %}
+    <style>
+        body {
+            background: #F4F4F4;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container mt-5">
+        <a href="{% url "my_profile" %}?query=my_companies" class="btn btn-grey"><i class="mdi mdi-chevron-left"></i> Назад</a>
+    </div>
+
+    <div class="container mb-5">
+        <h2 class="mt-5 text-center mb-3">Редактировать компанию</h2>
+        <div class="card-d">
+            <form action="" class="mt-4 form-input-effect" id="form-input-effect" method="post">
+                {% if gs_auth_error %}
+                    <div class="error-hide mb-5">{{ gs_auth_error }}</div>
+                {% endif %}
+                <div class="container mb-3">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        {% for field in form %}
+                            <div class="form-group col-md-6">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                {{ field.label_tag }}
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="w-100 mt-4 text-center">
+                        <input type="submit" class="btn btn-big btn-blue" value="{% if c.is_closed %}На модерацию{% else %}Сохранить{% endif %}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

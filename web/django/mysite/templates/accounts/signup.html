@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block head-down %}
+    <style>
+        body {
+            background: #F4F4F4;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1 class="mt-5 text-center mb-3">Регистрация</h1>
+        <div class="card-reg">
+<!--            <div class="card-red-links">-->
+<!--                <div class="row">-->
+<!--                    <div class="col-6" style="padding-right: 2px">-->
+<!--                        <div class="card-red-link" style="border-radius: 5px 0px 0px 0px;">-->
+<!--                            <a href="#">Для юрфирм и юристов</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-6" style="padding-left: 2px">-->
+<!--                        <div class="card-red-link active" style="border-radius: 0px 5px 0px 0px;">-->
+<!--                            <a href="#">Для бизнеса и предпринимателей</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <form action="" class="mt-5 form-input-effect" id="form-input-effect" method="post">
+                <h4 class="text-center mb-4">Придумайте Логин и пароль для входа</h4>
+                {% if gs_auth_error %}
+                    <div class="error-hide mb-5">{{ gs_auth_error }}</div>
+                {% endif %}
+                <div class="container mb-3">
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        {% if form.errors.email %}
+                            <div class="error-hide">{{ form.errors.email }}</div>
+                        {% endif %}
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group mb-4">
+                        {% if form.errors.username %}
+                            <div class="error-hide">{{ form.errors.username }}</div>
+                        {% endif %}
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group mb-4">
+                        {% if form.errors.password1 %}
+                            <div class="error-hide">{{ form.errors.password1 }}</div>
+                        {% endif %}
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+                        <span class="focus-border"></span>
+                    </div>
+                    <div class="form-group mb-4">
+                        {% if form.errors.password2 %}
+                            <div class="error-hide">{{ form.errors.password2 }}</div>
+                        {% endif %}
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+                        <span class="focus-border"></span>
+                    </div>
+                </div>
+                <div class="text-center mt-3 mb-2">
+                    <input type="submit" value="Далее" class="btn btn-blue btn-big text-white mb-2 mt-3">
+                </div>
+            </form>
+        </div>
+        <div class="card-d mt-3 mb-3">
+            <p class=" text-center mb-0">Уже зарегестрированы? <a class="blue-link" href="{% url 'login' %}">Войти в аккаунт</a></p>
+        </div>
+    </div>
+{% endblock %}
