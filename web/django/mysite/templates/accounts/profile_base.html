@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head-down %}
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,700&amp;subset=cyrillic" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-4 col-12">
+            <div class="company_block block-bg">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <img class="image_comp" src="{{ user.image.url }}" alt="" width="50%" height="10%" >
+                    </div>
+                    <div class="row">
+                            <p class="company_name">{{user.username}}</p>
+                    </div>
+                    <div class="row">
+                        <div class="line_under_image"> </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="adr_position_text">
+                                <p class="adress_text text-center">{{user.first_name}} {{user.last_name}} {{user.patronymic}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="adr_position">
+                                <p class="adress">Адрес</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="adr_position_text">
+                                <p class="adress_text">{%if user.postal_address%}{{user.postal_address}}{%else%}--{%endif%}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="number">Контактный номер</p>
+                        </div>
+                        <div class="col">
+                            <p class="number_text">{%if user.tel_number%}{{user.tel_number}}{%else%}--{%endif%}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="email">Электронная почта</p>
+                        </div>
+                        <div class="col">
+                            <p class="email_text">{%if user.email%}{{user.email}}{%else%}--{%endif%}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-8 col-12 mt-5 mt-md-0">
+            <div class="row">
+                <div class="col">
+                    <ul class="nav nav-profile_3">
+                        <li class="nav-item">
+                            <a class="nav-link first_line_title {% if my_publications %}active{% endif %}" href="{% url 'profile' user_id=user_id %}?query=my_publications">Публикации</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link first_line_title {% if my_companies %}active{% endif %}" href="{% url 'profile' user_id=user_id %}?query=my_companies">Компании</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+            {% if my_publications %}
+                <div class="row">
+                    <div class="col">
+                        <ul class="nav nav-profile_2 nav-profile_2-publications2 mt-3">
+                            <li class="nav-item {% if request.GET.tab == "0" or not request.GET.tab %}active{% endif %}">
+                                <a class="nav-link  second_line_title" href="{% url 'profile' user_id=user_id %}?query=my_publications&tab=0">Алёрты</a>
+                            </li>
+                            <li class="nav-item {% if request.GET.tab == "1" %}active{% endif %}">
+                                <a class="nav-link second_line_title" href="{% url 'profile' user_id=user_id %}?query=my_publications&tab=1">Дайджесты</a>
+                            </li>
+                            <li class="nav-item {% if request.GET.tab == "2" %}active{% endif %}">
+                                <a class="nav-link second_line_title" href="{% url 'profile' user_id=user_id %}?query=my_publications&tab=2">Аналитика</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% elif my_companies %}
+<!--                <div class="row">-->
+<!--                    <div class="col">-->
+<!--                        <ul class="nav nav-profile_2 nav-profile_2-companies mt-3">-->
+<!--                            <li class="nav-item {% if not request.GET.is_accepted == "1" %}active{% endif %}">-->
+<!--                                <a class="nav-link  second_line_title" href="{% url 'profile' user_id=user_id %}?query=my_companies&is_accepted=0">На проверке</a>-->
+<!--                            </li>-->
+<!--                            <li class="nav-item {% if request.GET.is_accepted == "1" %}active{% endif %}">-->
+<!--                                <a class="nav-link second_line_title" href="{% url 'profile' user_id=user_id %}?query=my_companies&is_accepted=1">Проверенные</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+            {% else %}
+            {% endif %}
+
+            <div class="container mt-5">
+                {% block profile_data %}{% endblock %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

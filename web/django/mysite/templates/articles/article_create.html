@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head-down %}
+    <style>
+        body {
+            background: #F4F4F4;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container mb-5">
+        <h2 class="mt-5 text-center mb-3">Создание статьи</h2>
+        <div class="card-d p-3">
+            <form action="{% url 'create_article' %}" enctype="multipart/form-data" class="w-100 form-input-effect" id="form-input-effect" method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    {% for field in form %}
+                        {% if field.name == 'text' %}
+                            <div class="form-group col-md-12 mt-5">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% elif field.name == 'title' %}
+                            <div class="form-group col-md-12 mt-2">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% elif field.name == 'description' %}
+                            <div class="form-group col-md-12 mt-2">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% elif field.name == 'category' %}
+                            <div class="form-group col-md-6">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                <select name="category" class="form-control" id="id_category">
+                                    <option value="" selected="">---------</option>
+                                    {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% elif field.name == 'type' %}
+                            <div class="form-group col-md-6">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                <select name="type" class="form-control" id="id_type">
+                                    {% for type in types %}
+                                    <option value="{{type.id}}" {% if type.char_id == request.GET.type %}selected{% elif type.char_id == 'alerts' and not request.GET.type %}selected{%endif%}>{{type.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% elif field.name == 'allow_comments' %}
+                            <h5 class="mt-4 mb-3 col-md-12 text-center">Настройки коммуникабельности</h5>
+                            <div class="col-md-4">
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% elif field.name == 'allow_likes' %}
+                            <div class="col-md-4">
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% else %}
+                            <div class="form-group col-md-6">
+                                {% if field.errors %}
+                                    <div class="error-hide">{{ field.errors }}</div>
+                                {% endif %}
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="w-100 mt-5 text-center">
+                    <input type="submit" class="btn btn-big btn-blue" value="Создать пост">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

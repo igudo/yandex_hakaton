@@ -1,0 +1,13 @@
+
+
+.table-crm-companies {
+    width: 85%;
+    margin: 0 auto;
+    border: 2px solid #dee2e6;
+}
+
+.tb-crm-company:hover {
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    transform: scale(1.005);
+    background: white;
+}

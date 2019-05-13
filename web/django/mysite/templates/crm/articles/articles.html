@@ -1,0 +1,90 @@
+{% extends 'crm/base.html' %}
+{% load static %}
+{% load hosts %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/articles/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mt-5 text-center">Статьи</h2>
+        <div class="row mb-3 ">
+            <p>ФИЛЬТР</p>
+            <div class=" w-100">
+                <form action="">
+                    <div class="input-group w-100 mb-3">
+                        <input type="text" class="form-control" required name="s" id="myInput" placeholder="Поиск" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <div class="input-group-append">
+                            <input class="btn btn-blue w-100" type="submit" id="button-addon1" value="Искать">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-profile_2 nav-profile_2-companies mt-3">
+                    <li class="nav-item {% if not request.GET.is_accepted == "1" %}active{% endif %}">
+                        <a class="nav-link  second_line_title" href="{% url 'articles' %}?is_accepted=0">Модерация</a>
+                    </li>
+                    <li class="nav-item {% if request.GET.is_accepted == "1" %}active{% endif %}">
+                        <a class="nav-link second_line_title" href="{% url 'articles' %}?is_accepted=1">Одобренные</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row" id="article_wrap" data-last-id="{{ last_id }}">
+            {% for article in articles %}
+
+                {% if not request.GET.is_accepted == "1" %}
+                    {% include 'crm/articles/one_article_on_moder.html' %}
+                {% else %}
+                    {% include 'crm/articles/one_article.html' %}
+                {% endif %}
+
+            {% endfor %}
+        </div>
+        <div class="text-center mb-4">
+            <a class="btn btn-blue mt-5" id="load-btn" onclick="load_more($('#articles').attr('data-last-id'));return false;" href="/">Загрузить еще</a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+    function not_enough_permissions() {
+            swal('Недостаточно прав!', {
+                icon: "error",
+            });
+        }
+    function get_url(last_id) {
+        var is_accepted = '{{ request.GET.is_accepted }}';
+        var u = "{% url 'articles' %}" + "?last_id=" + last_id.toString() + '&is_accepted=' + is_accepted;
+        return u;
+    }
+</script>
+
+<script>
+    $('.clickable a').click(function(e){ e.stopPropagation(); });
+</script>
+<script src="{% static 'js/post_ajax.js' %}"></script>
+<script src="{% static 'js/articles.js' %}"></script>
+
+<script>
+    function get_bookmarks_url(type, pk) {
+        var u = "{% host_url 'bookmarks_none' %}" + type + '/' + pk + '/';
+
+        return u;
+    }
+</script>
+
+{% endblock %}

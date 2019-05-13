@@ -1,0 +1,22 @@
+{% load static %}
+{% load users_extras %}
+{% load hosts %}
+
+<div class="col-md-12 col-sm-12 mt-2 mb-2">
+    <div class="news5g-card news5g-card-clickable middleclick-newtab-link" data-link="{% host_url 'article' slug=article.slug %}" onclick="document.location = '{% host_url 'article' slug=article.slug %}'">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="news5g-card-top-wrap">
+                    <div class="news5g-card-top" style="background: url('{{ article.image.url }}');background-position: center center; background-size: cover; background-repeat: no-repeat;background-color: #ffffff;"></div>
+                </div>
+            </div>
+            <div class=" col-12 col-md-8">
+                <div class="news5g-card-bottom">
+                    <h4 class="card-title">{{ article.title }}</h4>
+                        <p class="card-text">{{ article.description }}</p>
+                        <p class="card-views">Просмотров: {{article.views}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

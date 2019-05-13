@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/landing.css" %}">
+    <link rel="stylesheet" href="{% static "css/articles/main.css" %}">
+
+{% endblock %}
+{% block content %}
+    <div class="container mt-5 mb-3">
+        <div class="row">
+            <div class="col-12 col-sm-4 col-md-3 flex-center">
+                <h3 class="logo-font">Модестин -</h3>
+            </div>
+            <div class="col-12 col-sm-8 col-md-9 flex-center">
+                <p class="font-normal m-0 font-medium"> это ресурс, который предоставляет единый доступ к профессиональной аналитике от юридических фирм и других организаций, занимающихся исследованием права, правоприменения и законотворчества.</p>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12 col-md-5">
+                <h3 class="logo-font text-left">Юристам</h3>
+                <div class="modestin-card bg-gray-card" id="columnTwo">
+                    <h3 class="text-left">Заявите о себе миру</h3>
+                    <p class="text-left">Пишите, записывайте и публикуйте материалы, которые продемонстрируют качество Вашей юридической экспертизы.</p>
+                    <h3 class="text-left mt-5">Привлекайте клиентов</h3>
+                    <p class="text-left">Воспользуйтесь расширенным функционалом и разошлите свою аналитику тем компаниям, которые могут быть заинтересвоанны в Ваших услугах.</p>
+                    <a href="" class="btn btn-blue" >Подробнее</a>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-12 col-md-5">
+                <h3 class="logo-font text-right">Бизнесу</h3>
+                <div class="modestin-card bg-dark-card" id="columnOne">
+                    <h3 class="text-left">Оформите подписку</h3>
+                    <p class="text-left">Вы можете оформить подписку и автоматически получать наиболее релевантную для Вашего бизнеса аналитику.</p>
+                    <h3 class="text-left mt-5">Расскажите о потребностях вашего бизнеса</h3>
+                    <p class="text-left">Опишите, как работает Ваша компания, и Вы сможете регулярно получать предложения по оптимизации и улучшению Ваших бизнесс-процессов.</p>
+                    <a href="" class="btn btn-blue">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+    $("#columnTwo a.btn.btn-blue").css('margin-top', $("#columnOne").height() - $("#columnTwo").height());
+</script>
+
+{% endblock %}

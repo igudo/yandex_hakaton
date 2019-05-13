@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load users_extras %}
+{% load bleach_tags %}
+
+{% block head %}
+<!-- Theme included stylesheets -->
+<!--<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">-->
+<link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+<link href="{% static 'css/articles/article.css' %}" rel="stylesheet">
+
+<!--<link href="//cdn.quilljs.com/1.3.6/quill.core.css" rel="stylesheet">-->
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+<!--        <p>213131313</p>-->
+    </div>
+
+    <div class="container mt-5">
+        <a href="{% if article.type.char_id == 'alerts' %}{% url 'alerts_index' %}{% elif article.type.char_id == 'digests' %}{% url 'digests_index' %}{% else %}{% url 'analitics_index' %}{% endif %}" class="btn btn-grey"><i class="mdi mdi-chevron-left"></i> Назад</a>
+    </div>
+
+    <div class="modestin-card-article">
+        <div class="layout mb-5">
+            <div class="article" id="content-article" style="padding: 2rem 1rem;">
+                <div class="article-card-header gs-card modestin-card">
+                    <div class="container">
+                        <h2 style="word-break: break-word">{{ article.title }}</h2>
+                        <p class="mt-3 article-desc">{{ article.date_posted }}
+                            <span class="ml-5 mr-5">{{ article.views }} {{ word }}</span>
+                            {%if article.category%}
+                            <a class="mr-5">{{ article.category|upper }}</a>
+                            {% endif %}
+                            {%if article.allow_likes%}
+                            <span class="ml-5 d-none">Лайки: </span><a href="" data-id="{{ article.id }}" data-type="article" data-action="like" class="article-like {% if article.likes.all|user_in:user %}active{% endif %} {% if not request.user.is_authenticated %}disabled{% endif %}" ><i class="mdi mdi-thumb-up mr-1"></i><span data-count="like">{{ article.likes.count }}</span></a>
+                            {% endif %}
+                        </p>
+                        <div class="mt-4 mb-1 article-card-body clearfix">{{ article.text|bleach:"img,p,h3,h4,em,strong,a,ul,ol,li,blockquote,u,br" }}</div>
+                        <div class="text-center">
+                            <p>Поделиться: </p><div class="ya-share2" data-services="vkontakte,facebook,twitter,odnoklassniki,reddit,telegram"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    {%if article.allow_comments%}
+    <div class="modestin-comments mb-5">
+        <div class="container">
+            <h3>Комментарии</h3>
+
+            <div class="mt-5  p-2" id="comments">
+            {% if form %}
+                <h3 id="write_comment"><a href="" onclick="show_comments_form('write_comment');return false;">Написать комментарий</a></h3>
+                <form id="comment_form" class="write-comment-block block-bg" action="" method="post" novalidate>
+                    <p class="text-black-50"><i class="mdi mdi-help-circle"></i> Выделите текст для редактирования</p>
+                    <p class="text-danger" id="comment-error"></p>
+                    {% csrf_token %}
+                    <div id="editor-container" class="form-control"></div>
+
+                    {% for error in form_errors %}
+                        <div class="error-hide">{{ error }}</div>
+                    {% endfor %}
+
+                    {{ form }}
+
+                    <span class="d-none text-danger" id="error_Syms">Превышено количество символов!</span>
+                    <div class="text-right">
+                        <span class="mr-5">Осталось символов: <span id="num_sym_left">1000</span></span>
+                        <button type="submit" class="btn btn-blue mt-3"><i class="mdi mdi-comment"></i>&nbsp;&nbsp;Комментировать</button>
+                    </div>
+                </form>
+            {% else %}
+                <h3>Написать комментарий</h3>
+                <div class="text-left">
+                    Только авторизованные пользователи могут оставлять комментарии.
+                </div>
+            {% endif %}
+            </div>
+
+            <div class="mt-5">
+                {% for comment in comments %}
+                    <div class="modestin-comment">
+                        <a name="comment-{{ comment.id }}"></a>
+                        <div class="row" id="{{ comment.id }}">
+                            <div class="col-{{ comment.get_col }} offset-{{ comment.get_offset }}">
+                                <div class="card card-default modestin-comment-card">
+                                    <div class="card-heading">
+                                        <a href="{% url 'profile' user_id=comment.author.id %}"><strong style="transition-duration: 0s;">{{ comment.author.get_full_name|default:comment.author.username }}</strong></a>&nbsp;&nbsp;
+                                        {{ comment.pub_date }}
+                                        <a href="#comment-{{ comment.id }}">#</a>
+                                    </div>
+                                    <div class="card-body modestin-comment-body">
+                                        <div>{{ comment.content|bleach }}</div>
+                                        {% if form %}<a href="" class="btn btn-xs pull-right btn-grey" onclick="show_comments_form({{ comment.id }});return false;">
+                                            <i class="mdi mdi-reply"></i>&nbsp;&nbsp;Ответить</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+
+{% block js %}
+{% if form %}
+    <script src="{% static 'js/post_ajax.js' %}"></script>
+    <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<!--    <script src="//cdn.quilljs.com/1.3.6/quill.core.js"></script>-->
+
+    <script>
+        var quill = new Quill('#editor-container', {
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    ['link']
+                ]
+            },
+            theme: 'bubble'  // or 'bubble'
+        });
+
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        // Populate hidden form on submit
+        var about = document.querySelector('textarea[name=comment_area]');
+        about.value = quill.container.firstChild.innerHTML;
+        if (quill.container.firstChild.innerText.replace(/^\s+|\s+$/g, '').split(/\s+/).join('').length == 0) {
+            $('#comment-error').text('Введите текст комментария.');
+            return false;
+        }
+        return true;
+    };
+
+    quill.on('text-change', function(delta, oldDelta, source) {
+        $('#num_sym_left').text(1000 - quill.container.firstChild.innerText.length);
+        if (1000 - quill.container.firstChild.innerText.length < 0) {
+            quill.setContents(oldDelta);
+            $('#error_Syms').removeClass('d-none');
+        } else {
+                $('#error_Syms').addClass('d-none');
+                $('#comment-error').text('');
+
+        }
+    });
+    </script>
+{% endif %} т
+
+    <script>
+        $('.table').each(function(i,elem) {
+            $(elem).addClass('table-hover');
+            $(elem).addClass('table-responsive');
+        });
+
+        function like()
+        {
+            var like = $(this);
+            var type = like.data('type');
+            var pk = like.data('id');
+            var action = like.data('action');
+            var dislike = like.next();
+
+            $.ajax({
+                url : '/articles/article/'+ pk +'/like/',
+                type : 'POST',
+                data : { 'obj' : pk },
+
+                success : function (json) {
+                    like.find("[data-count='like']").text(json.like_count);
+                    dislike.find("[data-count='dislike']").text(json.dislike_count);
+                    if (json.user_liked) {
+                        like.addClass('active');
+                    } else {
+                        like.removeClass('active');
+                    }
+                }
+            });
+
+            return false;
+        }
+
+        function dislike()
+        {
+            var dislike = $(this);
+            var type = dislike.data('type');
+            var pk = dislike.data('id');
+            var action = dislike.data('action');
+            var like = dislike.prev();
+
+            $.ajax({
+                url : "/api/" + type +"/" + pk + "/" + action + "/",
+                type : 'POST',
+                data : { 'obj' : pk },
+
+                success : function (json) {
+                    dislike.find("[data-count='dislike']").text(json.dislike_count);
+                    like.find("[data-count='like']").text(json.like_count);
+                    if (json.user_liked) {
+                        dislike.addClass('active');
+                    } else {
+                        dislike.removeClass('active');
+                    }
+                }
+            });
+
+            return false;
+        }
+
+        // Подключение обработчиков
+        $(function() {
+            $('[data-action="like"]').click(like);
+            //$('[data-action="dislike"]').click(dislike);
+        });
+
+        function show_comments_form(parent_comment_id)
+        {
+            if (parent_comment_id == 'write_comment')
+            {
+                $("#id_parent_comment").val('')
+            }
+            else
+            {
+                $("#id_parent_comment").val(parent_comment_id);
+            }
+            $("#comment_form").insertAfter("#" + parent_comment_id);
+        }
+    </script>
+    <script src="//yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+    <script src="//yastatic.net/share2/share.js"></script>
+
+    <script>
+        $(function() {
+            $('.article-card-body a[href]').attr('target', '_blank');
+            $('.modestin-comment-body a[href]').attr('target', '_blank');
+        });
+    </script>
+
+{% endblock %}
