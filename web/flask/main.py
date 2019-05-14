@@ -1,9 +1,11 @@
 import os
 import hashlib
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, abort
+from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
+import json
+import logging
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -346,6 +348,41 @@ def user(user_id):
         flash('Ваш профиль обновлён!')
         return redirect(url_for('user', user_id=user_id))
     return render_template('user.html', user=user1, posts_count=posts_count, form=form)
+
+@app.route('/api/auth', methods=['POST'])
+def auth():
+        logging.info('Request: %r', request.json)
+        try:
+            a = User.query.filter_by(username=request['login'], password=request["password"])
+            if a != []:
+                response = {'token': a[0].id, "login": request['login'], "password": request["password"]}
+            else:
+                response = {'success': 'NO'}
+
+            logging.info('Response: %r', request.json)
+
+            return json.dumps(response)
+        except Exception:
+            response = {'success': 'NO'}
+            return json.dumps(response)
+
+
+@app.route('/api/task/<token>', methods=['GET'])
+def tasks(token):
+    try:
+        posts = []
+        admin_posts = Post.query.filter_by(author_id=1).order_by(Post.timestamp.desc()).all()
+        user_posts = Post.query.filter_by(author_id=int(token)).order_by(Post.timestamp.desc()).all()
+        user_posts_exec = Post.query.filter_by(exec_id=int(token)).order_by(Post.timestamp.desc()).all()
+        for post in user_posts:
+            posts.append(post.body)
+        seva = {}
+        seva["posts"] = posts
+        return str(seva)
+    except Exception:
+        response = {'success': 'NO'}
+        return str(response)
+
 
 
 @app.route('/change-password', methods=['GET', 'POST'])
