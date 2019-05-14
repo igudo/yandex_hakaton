@@ -174,7 +174,7 @@ def posts():
     form = PostForm()
     
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), exec_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('posts'))
@@ -315,6 +315,24 @@ def delegate_post(post_id):
 
     form.exec_id.data = post.exec_id
     return render_template('delegate_post.html', form=form)
+
+
+@app.route('/change_status_post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def change_status_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    if int(current_user.get_id()) not in (int(post.author_id), int(post.exec_id)):
+        abort(403)
+    post.status += 1
+
+    if post.status == 6:
+        post.finish = 1
+
+    db.session.add(post)
+    db.session.commit()
+    flash('Запись успешно изменена.')
+    return redirect(url_for('posts'))
 
 
 @app.route('/user/<int:user_id>', methods=['GET', 'POST'])

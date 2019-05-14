@@ -18,6 +18,7 @@
        </li>
        {% endfor %}
        {% for post in posts_exec %}
+        {% if post.author_id != post.exec_id %}
        <li class="post">
           <div class="profile-thumbnail">
             <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
@@ -33,6 +34,7 @@
               </div>
           </div>
        </li>
+        {% endif %}
        {% endfor %}
     </ul>
 </div>
