@@ -64,13 +64,6 @@ class PostForm(FlaskForm):
     submit = SubmitField('Запостить')
 
 
-class DelegateForm(FlaskForm):
-    # Посты + валидность от фласка.
-
-    login = StringField("Логин", validators=[DataRequired()])
-    submit = SubmitField('Делегировать')
-
-
 class EditProfileForm(FlaskForm):
     about = TextAreaField('Обо мне')
     submit = SubmitField('Обновить')
@@ -144,7 +137,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     author_name = db.Column(db.Text)
     exec_name = db.Column(db.Text)
-    date_end = db.Column(db.Integer)
+    data_end = db.Column(db.Integer)
     # время UTC ну лондонское
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -171,7 +164,7 @@ def posts():
     form = PostForm()
     
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name = current_user.username, exec_name = current_user.username, date_end=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('posts'))
@@ -188,7 +181,7 @@ def index():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name = current_user.username, exec_name = current_user.username, date_end=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('index'))
@@ -287,26 +280,6 @@ def edit_post(post_id):
     
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
-
-@app.route('/delegate/<int:post_id>', methods=['GET', 'POST'])
-@login_required
-def delegate_post(post_id):
-    post = Post.query.get_or_404(post_id)
-
-    if int(current_user.get_id()) != int(post.author_id):
-        abort(403)
-
-    form = DelegateForm()
-
-    if form.validate_on_submit():
-        post.author_id = form.login.data
-        db.session.add(post)
-        db.session.commit()
-        flash('Запись успешно изменена.')
-        return redirect(url_for('posts'))
-
-    form.login.data = post.author_id
-    return render_template('delegate_post.html', form=form)
 
 
 @app.route('/user/<int:user_id>', methods=['GET', 'POST'])
