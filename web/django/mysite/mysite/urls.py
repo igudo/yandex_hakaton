@@ -27,6 +27,8 @@ urlpatterns = [  # главные урлы.
     path('accounts/', include('accounts.urls')),
     path('tasks/', include('tasks.urls')),
     path('admin/', admin.site.urls),
+    path('api/', include('rest_framework.urls', namespace='rest_framework'))
+
 ]
 
 

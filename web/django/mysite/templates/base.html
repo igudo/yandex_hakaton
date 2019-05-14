@@ -60,7 +60,7 @@
                 <div class="collapse navbar-collapse" style="flex-direction: row;" id="navbarNav">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link link-gray-bg {% if alerts %}active{% endif %}" href="">Алерты</a>
+                            <a class="nav-link link-gray-bg {% if my_tasks %}active{% endif %}" href="{% url 'my_tasks' %}">Мои задачи</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link link-gray-bg {% if digests %}active{% endif %}" href="">Дайджесты</a>
@@ -95,7 +95,7 @@
                                         <div class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <p class="text-center m-0">{{ request.user.username }}</p>
                                             <a class="dropdown-item {% if my_profile %}active{% endif %}" href="">Мой профиль</a>
-                                            {% if request.user.is_staff %}<a class="dropdown-item" href="//crm.{{ request.META.HTTP_HOST  }}/">Администрирование</a>{% endif %}
+                                            {% if request.user.is_staff %}<a class="dropdown-item" href="/admin">Администрирование</a>{% endif %}
                                             <a class="dropdown-item {% if settings %}active{% endif %}" href="">Настройки</a>
                                             <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
                                         </div>
