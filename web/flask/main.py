@@ -149,6 +149,8 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     exec_id = db.Column(db.Integer)
+    status = db.Column(db.Integer)
+    finish = db.Column(db.Integer)
 
 
 @app.context_processor
@@ -172,7 +174,7 @@ def posts():
     form = PostForm()
     
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('posts'))
@@ -190,7 +192,7 @@ def index():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status = 0, finish=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('index'))
