@@ -76,4 +76,15 @@ class LoginView(View):
             return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
+    
+class UserView(View):
+    form_class = LoginForm
+    initial = {}
+    template_name = 'accounts/user.html'
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        return render(request, self.template_name)
+
 
