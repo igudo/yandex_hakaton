@@ -178,7 +178,8 @@ def posts():
         return redirect(url_for('posts'))
 
     user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
-    return render_template('posts.html', form=form, posts=user_posts)
+    user_posts_exec = Post.query.filter_by(exec_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
+    return render_template('posts.html', form=form, posts=user_posts, posts_exec=user_posts_exec)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -195,7 +196,8 @@ def index():
         return redirect(url_for('index'))
 
     user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
-    return render_template('index2.html', form=form, posts=user_posts)
+    user_posts_exec = Post.query.filter_by(exec_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
+    return render_template('index2.html', form=form, posts=user_posts, posts_exec=user_posts_exec)
 
 @app.errorhandler(404)
 def page_not_found(e):

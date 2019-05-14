@@ -37,5 +37,42 @@
           </div>
        </li>
        {% endfor %}
+       {% for post in posts_exec %}
+       <li class="post">
+           <div class="row">
+               <div class="col-md-6">
+                   <p>Автор: {{ post.author.username }}</p>
+                  <div class="profile-thumbnail">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
+                  </div>
+               </div>
+
+               <div class="col-md-6">
+                   <p>Исполнитель: {{ post.exec_name }}</p>
+               </div>
+           </div>
+
+
+          <div class="post-content">
+              <div class="post-date">{{ post.timestamp.strftime('%d.%m.%Y %H:%M:%S') }}</div>
+              <div class="post-body">{{ post.body|safe }}</div>
+              <div class="post-footer">
+                  {% if current_user.is_authenticated
+                      and request.url_rule.endpoint != 'index' %}
+
+                    <a href="{{ url_for('delegate_post', post_id=post.id) }}">
+                        <span class="label label-warning">Делегировать</span>
+                    </a>
+                    <a href="{{ url_for('edit_post', post_id=post.id) }}">
+                        <span class="label label-warning">Изменить</span>
+                    </a>
+                    <a href="{{ url_for('delete_post', post_id=post.id) }}">
+                        <span class="label label-danger">Удалить</span>
+                    </a>
+                {% endif %}
+              </div>
+          </div>
+       </li>
+       {% endfor %}
     </ul>
 </div>
