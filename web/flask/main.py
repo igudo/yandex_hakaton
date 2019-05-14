@@ -141,6 +141,7 @@ class Post(db.Model):
     # время UTC ну лондонское
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    exec_id = db.Column(db.Integer)
 
 
 @app.context_processor
