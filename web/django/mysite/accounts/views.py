@@ -41,7 +41,7 @@ class RegistrationView(View):
             new_user.active = False
             new_user.save()
             login(request, new_user)
-            return HttpResponseRedirect(reverse('continue_signup'))
+            return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
 
@@ -73,7 +73,7 @@ class LoginView(View):
         if form.is_valid():
             user = form.user_cache
             login(request, user)
-            return HttpResponseRedirect(reverse('my_profile'))
+            return HttpResponseRedirect('/')
 
         return render(request, self.template_name, {'form': form})
     
