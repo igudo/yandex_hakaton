@@ -64,6 +64,13 @@ class PostForm(FlaskForm):
     submit = SubmitField('Запостить')
 
 
+class DelegatePostForm(FlaskForm):
+    # Посты + валидность от фласка.
+
+    exec_name = TextAreaField("Логин Исполнителя", validators=[DataRequired()])
+    submit = SubmitField('Запостить')
+
+
 class EditProfileForm(FlaskForm):
     about = TextAreaField('Обо мне')
     submit = SubmitField('Обновить')
@@ -280,6 +287,27 @@ def edit_post(post_id):
     
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
+
+
+@app.route('/delegate_post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def delegate_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    if int(current_user.get_id()) != int(post.author_id):
+        abort(403)
+
+    form = DelegatePostForm()
+
+    if form.validate_on_submit():
+        post.exec_name = form.exec_name.data
+        db.session.add(post)
+        db.session.commit()
+        flash('Запись успешно изменена.')
+        return redirect(url_for('posts'))
+
+    form.exec_name.data = post.exec_name
+    return render_template('delegate_post.html', form=form)
 
 
 @app.route('/user/<int:user_id>', methods=['GET', 'POST'])
