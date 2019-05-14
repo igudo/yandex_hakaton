@@ -12,6 +12,7 @@
     {{ form.hidden_tag() }}
     {{ wtf.form_errors(form, hiddens="only") }}
 
+    {{ wtf.form_field(form.date_offset) }}
     {{ wtf.form_field(form.body) }}
     {{ ckeditor.load() }}
     {{ ckeditor.config(name='body') }}

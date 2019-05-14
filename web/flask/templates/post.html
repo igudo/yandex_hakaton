@@ -15,7 +15,10 @@
 
 
   <div class="post-content">
-      <div class="post-date">{{ post.timestamp.strftime('%d.%m.%Y %H:%M:%S') }}</div>
+      <div class="post-date">
+          <p>Дата создания: {{ post.timestamp.strftime('%d.%m.%Y %H:%M:%S') }}</p>
+          <p>Дата дедлайна: {% if post.date_end %}{{ post.date_end.strftime('%d.%m.%Y %H:%M:%S') }}{% else %}Не задано{% endif %}</p>
+      </div>
       <div class="post-body">{{ post.body|safe }}</div>
       <div class="post-footer">
           {% if current_user.is_authenticated
