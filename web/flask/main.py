@@ -1,17 +1,17 @@
 import os
 import hashlib
-from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-import json
 import logging
+import json
+from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, SubmitField, PasswordField, TextAreaField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField, ValidationError, IntegerField
 from wtforms.validators import DataRequired, EqualTo
 from flask_ckeditor import CKEditor
+from datetime import datetime, timedelta
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -62,6 +62,7 @@ class RegistrationForm(FlaskForm):
 class PostForm(FlaskForm):
     # Посты + валидность от фласка.
 
+    data_offset = IntegerField("Через сколько часов дедлайн? (необязательно)", validators=[])
     body = TextAreaField("Есть новая заметка?", validators=[DataRequired()])
     submit = SubmitField('Запостить')
 
@@ -146,12 +147,14 @@ class Post(db.Model):
     body = db.Column(db.Text)
     author_name = db.Column(db.Text)
     exec_name = db.Column(db.Text)
-    data_end = db.Column(db.Integer)
+    date_offset = db.Column(db.Integer)
     # время UTC ну лондонское
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    date_end = db.Column(db.DateTime)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     exec_id = db.Column(db.Integer)
     status = db.Column(db.Integer)
+
     finish = db.Column(db.Integer)
 
 
@@ -176,7 +179,8 @@ def posts():
     form = PostForm()
     
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), exec_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), exec_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0, date_offset=form.date_offset.data)
+        post.date_end = post.timestamp + timedelta(hours=form.date_offset.data)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('posts'))
@@ -194,7 +198,7 @@ def index():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status = 0, finish=0)
+        post = Post(body=form.body.data, author_id=current_user.get_id(), exec_id=current_user.get_id(), author_name=current_user.username, exec_name=current_user.username, data_end=10, status=0, finish=0, date_offset=form.date_offset.data)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('index'))
@@ -319,6 +323,41 @@ def delegate_post(post_id):
     return render_template('delegate_post.html', form=form)
 
 
+@app.route('/api/auth', methods=['POST'])
+def auth():
+    logging.info('Request: %r', request.json)
+    try:
+        a = User.query.filter_by(username=request['login'], password=request["password"])
+        if a != []:
+            response = {'token': a[0].id, "login": request['login'], "password": request["password"]}
+        else:
+            response = {'success': 'NO'}
+
+        logging.info('Response: %r', request.json)
+
+        return json.dumps(response)
+    except Exception:
+        response = {'success': 'NO'}
+        return json.dumps(response)
+
+
+@app.route('/api/task/<token>', methods=['GET'])
+def tasks(token):
+    try:
+        posts = []
+        admin_posts = Post.query.filter_by(author_id=1).order_by(Post.timestamp.desc()).all()
+        user_posts = Post.query.filter_by(author_id=int(token)).order_by(Post.timestamp.desc()).all()
+        user_posts_exec = Post.query.filter_by(exec_id=int(token)).order_by(Post.timestamp.desc()).all()
+        for post in user_posts:
+            posts.append(post.body)
+        seva = {}
+        seva["posts"] = posts
+        return str(seva)
+    except Exception:
+        response = {'success': 'NO'}
+        return str(response)
+
+
 @app.route('/change_status_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def change_status_post(post_id):
@@ -348,41 +387,6 @@ def user(user_id):
         flash('Ваш профиль обновлён!')
         return redirect(url_for('user', user_id=user_id))
     return render_template('user.html', user=user1, posts_count=posts_count, form=form)
-
-@app.route('/api/auth', methods=['POST'])
-def auth():
-        logging.info('Request: %r', request.json)
-        try:
-            a = User.query.filter_by(username=request['login'], password=request["password"])
-            if a != []:
-                response = {'token': a[0].id, "login": request['login'], "password": request["password"]}
-            else:
-                response = {'success': 'NO'}
-
-            logging.info('Response: %r', request.json)
-
-            return json.dumps(response)
-        except Exception:
-            response = {'success': 'NO'}
-            return json.dumps(response)
-
-
-@app.route('/api/task/<token>', methods=['GET'])
-def tasks(token):
-    try:
-        posts = []
-        admin_posts = Post.query.filter_by(author_id=1).order_by(Post.timestamp.desc()).all()
-        user_posts = Post.query.filter_by(author_id=int(token)).order_by(Post.timestamp.desc()).all()
-        user_posts_exec = Post.query.filter_by(exec_id=int(token)).order_by(Post.timestamp.desc()).all()
-        for post in user_posts:
-            posts.append(post.body)
-        seva = {}
-        seva["posts"] = posts
-        return str(seva)
-    except Exception:
-        response = {'success': 'NO'}
-        return str(response)
-
 
 
 @app.route('/change-password', methods=['GET', 'POST'])
