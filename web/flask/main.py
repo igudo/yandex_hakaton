@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, SubmitField, PasswordField, TextAreaField, ValidationError
-from wtforms.validators import DataRequired, EqualTo, Email
+from wtforms.validators import DataRequired, EqualTo
 from flask_ckeditor import CKEditor
 
 
@@ -41,7 +41,6 @@ class RegistrationForm(FlaskForm):
     # Регистрация + валид от фласка. И подтверждение пароля.
 
     login = StringField('Логин', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField(
         'Пароль', 
         validators=[
@@ -95,7 +94,6 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about = db.Column(db.Text)
@@ -147,7 +145,7 @@ def inject_app_name():
     return dict(app_name="Заметки")
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/old', methods=['GET', 'POST'])
 def index():
     # Тема такая. У каждого обычного есть свои посты и главная. А у админа только свои посты
     # Он публикует и их все видят на главной. Первый человек сайта становится админом.
@@ -155,7 +153,7 @@ def index():
     return render_template('index.html', posts=admin_posts)
 
 
-@app.route('/posts', methods=['GET', 'POST'])
+@app.route('/add-task', methods=['GET', 'POST'])
 @login_required
 def posts():
     # Сразу проверка на авторизацию. Если авторизован - то показывает.
@@ -171,6 +169,22 @@ def posts():
     user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
     return render_template('posts.html', form=form, posts=user_posts)
 
+
+@app.route('/', methods=['GET', 'POST'])
+@login_required
+def index2():
+    # Сразу проверка на авторизацию. Если авторизован - то показывает.
+    # У каждого свой личный кабинет. Только он видит свою инфу.
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Post(body=form.body.data, author_id=current_user.get_id())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('index2'))
+
+    user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
+    return render_template('index2.html', form=form, posts=user_posts)
 
 @app.errorhandler(404)
 def page_not_found(e):
