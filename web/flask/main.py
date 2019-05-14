@@ -146,7 +146,7 @@ def inject_app_name():
 
 
 @app.route('/old', methods=['GET', 'POST'])
-def index():
+def old():
     # Тема такая. У каждого обычного есть свои посты и главная. А у админа только свои посты
     # Он публикует и их все видят на главной. Первый человек сайта становится админом.
     admin_posts = Post.query.filter_by(author_id=1).order_by(Post.timestamp.desc()).all()
@@ -172,7 +172,7 @@ def posts():
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
-def index2():
+def index():
     # Сразу проверка на авторизацию. Если авторизован - то показывает.
     # У каждого свой личный кабинет. Только он видит свою инфу.
     form = PostForm()
@@ -181,7 +181,7 @@ def index2():
         post = Post(body=form.body.data, author_id=current_user.get_id())
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('index2'))
+        return redirect(url_for('index'))
 
     user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
     return render_template('index2.html', form=form, posts=user_posts)
