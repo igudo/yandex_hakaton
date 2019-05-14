@@ -135,6 +135,9 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    author_name = db.Column(db.Text)
+    exec_name = db.Column(db.Text)
+    date_end = db.Column(db.Integer)
     # время UTC ну лондонское
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -161,7 +164,7 @@ def posts():
     form = PostForm()
     
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id())
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name = current_user.username, exec_name = current_user.username, date_end=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('posts'))
@@ -178,7 +181,7 @@ def index():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.body.data, author_id=current_user.get_id())
+        post = Post(body=form.body.data, author_id=current_user.get_id(), author_name = current_user.username, exec_name = current_user.username, date_end=0)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('index'))

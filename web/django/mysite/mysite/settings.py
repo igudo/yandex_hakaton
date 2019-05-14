@@ -38,8 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
-
     'accounts',
     'landing',
     'tasks',
@@ -57,8 +55,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
-
-PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
 ROOT_URLCONF = 'mysite.urls'
 
