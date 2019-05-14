@@ -23,6 +23,7 @@
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
             <li><a href="{{ url_for('posts') }}">Задачи</a></li>
+            <li><a href="{{ url_for('pross') }}">Просроченные задачи</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}

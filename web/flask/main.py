@@ -1,4 +1,5 @@
 import os
+import time
 import hashlib
 from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
@@ -184,7 +185,7 @@ def posts():
         db.session.commit()
         if form.date_offset.data:
             h = form.date_offset.data
-            post.date_end = post.timestamp + timedelta(hours=h)
+            post.date_end = post.timestamp + timedelta(hours=int(h))
             db.session.add(post)
             db.session.commit()
         return redirect(url_for('posts'))
@@ -192,6 +193,31 @@ def posts():
     user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
     user_posts_exec = Post.query.filter_by(exec_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
     return render_template('posts.html', form=form, posts=user_posts, posts_exec=user_posts_exec)
+
+
+@app.route('/pross', methods=['GET', 'POST'])
+@login_required
+def pross():
+    # Сразу проверка на авторизацию. Если авторизован - то показывает.
+    # У каждого свой личный кабинет. Только он видит свою инфу.
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Post(body=form.body.data, author_id=current_user.get_id(), exec_id=current_user.get_id(),
+                    author_name=current_user.username, exec_name=current_user.username, status=0, finish=0,
+                    date_offset=form.date_offset.data)
+        db.session.add(post)
+        db.session.commit()
+        if form.date_offset.data:
+            h = form.date_offset.data
+            post.date_end = post.timestamp + timedelta(hours=int(h))
+            db.session.add(post)
+            db.session.commit()
+        return redirect(url_for('pross'))
+
+    user_posts = Post.query.filter_by(author_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
+    user_posts_exec = Post.query.filter_by(exec_id=current_user.get_id()).order_by(Post.timestamp.desc()).all()
+    return render_template('pross.html', form=form, posts=user_posts, posts_exec=user_posts_exec, date_now=datetime.utcnow())
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -331,9 +357,11 @@ def delegate_post(post_id):
 def auth():
     logging.info('Request: %r', request.json)
     try:
-        a = User.query.filter_by(username=request['login'], password=request["password"])
-        if a != []:
-            response = {'token': a[0].id, "login": request['login'], "password": request["password"]}
+        user1 = User.query.filter_by(username=request["login"]).first()
+        # если юзер реален ну не пуст и верификация пароля пройдена( хеш от этого пароля совпадает с
+        # хешом в бд, который фласк генерит. То авторизируем
+        if user1 is not None and user1.verify_password(request["password"]):
+            response = {'token': user1.id, "login": request['login'], "password": request["password"]}
         else:
             response = {'success': 'NO'}
 
@@ -349,10 +377,11 @@ def auth():
 def tasks(token):
     try:
         posts = []
-        admin_posts = Post.query.filter_by(author_id=1).order_by(Post.timestamp.desc()).all()
         user_posts = Post.query.filter_by(author_id=int(token)).order_by(Post.timestamp.desc()).all()
         user_posts_exec = Post.query.filter_by(exec_id=int(token)).order_by(Post.timestamp.desc()).all()
         for post in user_posts:
+            posts.append(post.body)
+        for post in user_posts_exec:
             posts.append(post.body)
         seva = {}
         seva["posts"] = posts
