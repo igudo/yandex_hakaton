@@ -2,9 +2,20 @@
     <ul class="posts">
        {% for post in posts %}
        <li class="post">
-          <div class="profile-thumbnail">
-            <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
-          </div>
+           <div class="row">
+               <div class="col-md-6">
+                   <p>Автор: {{ post.author.username }}</p>
+                  <div class="profile-thumbnail">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
+                  </div>
+               </div>
+
+               <div class="col-md-6">
+                   <p>Исполнитель: {{ post.exec_name }}</p>
+               </div>
+           </div>
+
+
           <div class="post-content">
               <div class="post-date">{{ post.timestamp.strftime('%d.%m.%Y %H:%M:%S') }}</div>
               <div class="post-body">{{ post.body|safe }}</div>

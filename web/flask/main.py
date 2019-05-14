@@ -67,7 +67,7 @@ class PostForm(FlaskForm):
 class DelegatePostForm(FlaskForm):
     # Посты + валидность от фласка.
 
-    exec_name = TextAreaField("Логин Исполнителя", validators=[DataRequired()])
+    exec_id = StringField("ID Исполнителя", validators=[DataRequired()])
     submit = SubmitField('Запостить')
 
 
@@ -301,13 +301,15 @@ def delegate_post(post_id):
     form = DelegatePostForm()
 
     if form.validate_on_submit():
-        post.exec_name = form.exec_name.data
+        post.exec_id = form.exec_id.data
+        u = User.query.get_or_404(form.exec_id.data)
+        post.exec_name = u.username
         db.session.add(post)
         db.session.commit()
         flash('Запись успешно изменена.')
         return redirect(url_for('posts'))
 
-    form.exec_name.data = post.exec_name
+    form.exec_id.data = post.exec_id
     return render_template('delegate_post.html', form=form)
 
 
